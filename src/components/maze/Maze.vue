@@ -1,0 +1,63 @@
+<script setup lang="ts">
+  import { useMazeStore } from '../../stores/maze-store';
+  import { useGameStore } from '../../stores/game-store';
+  import MazeCell from './MazeCell.vue';
+
+  import { ref, watch } from 'vue';
+
+  const mazeStore   = useMazeStore();
+  const gameStore   = useGameStore();
+
+  const cells       = mazeStore.cells.flat();
+  const gridRows    = `repeat(${mazeStore.mazeConfig.height}, 1fr)`;
+  const gridColumns = `repeat(${mazeStore.mazeConfig.width}, 1fr)`;
+  const mazeWidth   = ref('');
+  const mazeHeight  = ref('');
+
+  watch(mazeStore.getCurrentCell, async (updatedValue, _) => {
+    if (!updatedValue.isGoal) { return; }
+    setTimeout(() => gameStore.setState('win'), 200);
+  });
+
+  const setMazeDimensions = () => {
+    const sHeight = window.innerHeight - 100;
+    const sWidth  = window.innerWidth;
+
+    let px = Math.min(
+      Math.floor(sHeight / mazeStore.mazeConfig.height),
+      Math.floor(sWidth / mazeStore.mazeConfig.width)
+    );
+
+    px = Math.min(px, 30);
+    px = Math.max(px, 10);
+
+    mazeWidth.value = `${mazeStore.mazeConfig.width * px}px`;
+    mazeHeight.value = `${mazeStore.mazeConfig.height * px}px`;
+  };
+
+  window.addEventListener('resize', setMazeDimensions);
+  setMazeDimensions();
+</script>
+
+<template>
+  <div class='maze casual'>
+    <MazeCell
+      v-for="cell in cells"
+      :key="cell.id"
+      :x="cell.x"
+      :y="cell.y"
+    />
+  </div>
+</template>
+
+<style scoped>
+  .maze {
+    margin: auto;
+    display:               grid;
+    width:                 v-bind(mazeWidth);
+    height:                v-bind(mazeHeight);
+    grid-template-columns: v-bind(gridColumns);
+    grid-template-rows:    v-bind(gridRows);
+    outline:               none;
+  }
+</style>
