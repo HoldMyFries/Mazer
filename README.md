@@ -1,21 +1,21 @@
-# mazer
+# Mazer
 
 A playable maze generator with varying selectable difficulties:
 
-- Casual
-  A medium-size maze using a simple backtracking algorithm that, when reaching a dead-end, returns to the most recently visited tile that has not yet been traversed.
+### Casual
+A medium-size maze using a simple backtracking algorithm that, when reaching a dead-end, returns to the most recently visited tile that has not yet been traversed.
 
-- Easy
-  A small-size maze using a backtracking algorithm that returns to any previusly visited cell when reaching a dead-end.
+### Easy
+A small-size maze using a backtracking algorithm that returns to any previusly visited cell when reaching a dead-end.
 
-- Medium
-  A medium-size maze using the same backtracking algorithm used by Easy mazes.
+### Medium
+A medium-size maze using the same backtracking algorithm used by Easy mazes.
 
-- Hard
-  A large-size maze using the same backtracking algorithm as easy and medium mazes.
+### Hard
+A large-size maze using the same backtracking algorithm as easy and medium mazes.
 
-- Diabolical
-  An extra large, extra difficult maze.
+### Diabolical
+An extra large, extra difficult maze.
 
 ## Recommended IDE Setup
 
