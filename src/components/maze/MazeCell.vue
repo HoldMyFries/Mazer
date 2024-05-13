@@ -16,12 +16,16 @@
     if (boundaries & 2 && neighbors.right) { classes.push('e-wall'); }
     if (boundaries & 4 && neighbors.down) { classes.push('s-wall'); }
     if (boundaries & 8 && neighbors.left) { classes.push('w-wall'); }
-    if (!neighbors.up && (y > 0 || x > 0)) { classes.push('n-wall-thick'); }
+    if (!neighbors.up && !cell.isStart) { classes.push('n-wall-thick'); }
     if (!neighbors.right) { classes.push('e-wall-thick'); }
     if (!neighbors.down && !cell.isGoal) { classes.push('s-wall-thick'); }
     if (!neighbors.left) { classes.push('w-wall-thick'); }
-    if (cell.playerVisited) { classes.push('visited'); }
-    if (isCurrentPosition()) { classes.push('current'); }
+    if (isCurrentPosition()) {
+      classes.push('current');
+    } else if (cell.playerVisited) {
+      classes.push('visited');
+    }
+    
 
     return classes.join(' ');
   });
@@ -34,8 +38,8 @@
 </template>
 
 <style scoped>
-  .maze-cell.current { background-color: #54AAD3 !important; opacity: 1 !important; }
-  .maze-cell.visited { opacity: 0.5; background-color: gray; }
+  .maze-cell.current { background-color: #54AAD3; }
+  .maze-cell.visited { background-color: rgb(127, 127, 127, 0.5); }
   .maze-cell.n-wall { border-top:    1px solid black; }
   .maze-cell.e-wall { border-right:  1px solid black; }
   .maze-cell.s-wall { border-bottom: 1px solid black; }

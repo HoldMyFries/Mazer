@@ -1,11 +1,12 @@
 export interface MazeType {
-  id: number,
-  name: string,
+  id:          number,
+  name:        string,
   description: string,
-  minHeight: number,
-  maxHeight: number,
-  minWidth:  number,
-  maxWidth:  number,
+  minHeight:   number,
+  maxHeight:   number,
+  minWidth:    number,
+  maxWidth:    number,
+  woven:       boolean,
 }
 
 export interface Maze {
@@ -17,12 +18,20 @@ export interface Coordinate {
   y: number, // column
 }
 
+export enum BridgeDirection {
+  HORIZONTAL = 'h',
+  VERTICAL   = 'v',
+}
+
 export interface Cell extends Coordinate {
-  id:            number,  // Needed for Vue v-for
-  boundaries:    number,  // bitfield
-  algoVisited:   boolean, // whether or not the algorithm has visited this cell
-  playerVisited: boolean, // whether or not the player has visited this cell
-  isGoal:        boolean,
+  id:               number,  // Needed for Vue v-for
+  boundaries:       number,  // bitfield
+  algoVisited:      boolean, // whether or not the algorithm has visited this cell
+  playerVisited:    boolean, // whether or not the player has visited this cell
+  isGoal:           boolean,
+  isStart:          boolean,
+  isBridge?:        boolean,
+  bridgeDirection?: BridgeDirection,
 }
 
 export enum Boundaries {
@@ -33,13 +42,16 @@ export enum Boundaries {
 }
 
 export interface MazeConfiguration {
-  width:  number,
-  height: number,
+  width:       number,
+  height:      number,
+  cellHeight?: number,
+  woven:       boolean,
 }
 
 export interface NewMaze {
   height: number,
   width:  number,
+  woven:  boolean,
   maze:   Maze,
 }
 

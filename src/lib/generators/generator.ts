@@ -1,4 +1,5 @@
 import type { Cell, Coordinate, Maze, MazeType } from '../interfaces';
+import { BridgeDirection } from '../interfaces';
 
 // Inherited by difficulty-specific generators
 // Not intended to be used directly
@@ -6,11 +7,13 @@ export class Generator {
   maze: Maze;
   width: number;
   height: number;
+  woven: boolean;
   visitedCells: Cell[];
 
   constructor(mazeType: MazeType) {
     this.width        = Math.floor(Math.random() * (mazeType.maxWidth - mazeType.minWidth )) + mazeType.minWidth;
     this.height       = Math.floor(Math.random() * (mazeType.maxHeight - mazeType.minHeight )) + mazeType.minHeight;
+    this.woven        = mazeType.woven;
     this.maze         = this.buildInitialMaze();
     this.visitedCells = [];
   }
@@ -36,6 +39,7 @@ export class Generator {
       board.push(row);
     }
   
+    board[0][0].isStart = true;
     board[this.height - 1][this.width - 1].isGoal = true;
 
     return { board } as Maze;
@@ -57,7 +61,12 @@ export class Generator {
         continue;
       }
   
-      const nextStep = neighbors[Math.floor(Math.random() * neighbors.length)];
+      let nextStep = neighbors[Math.floor(Math.random() * neighbors.length)];
+      if (nextStep.algoVisited) { // bridge time!
+        this.maze.board[nextStep.y][nextStep.x].isBridge = true;
+        this.maze.board[nextStep.y][nextStep.x].bridgeDirection = (x !== nextStep.x ? BridgeDirection.VERTICAL : BridgeDirection.HORIZONTAL );
+        nextStep = this.otherSideOfTheBridge(currentPosition, nextStep);
+      }
 
       if (!nextStep.algoVisited) { this.visitedCells.push(nextStep); }
 
@@ -87,12 +96,108 @@ export class Generator {
   }
 
   validNeighbors({ x, y }: Coordinate): Cell[] {
+    if (this.woven) { return this.validNeighborsWithBridges({ x, y }); }
+
     const neighbors = [];
+
     if (y > 0) { neighbors.push(this.maze.board[y - 1][x]); }
     if (x < this.width - 1) { neighbors.push(this.maze.board[y][x + 1]); }
     if (y < this.height - 1) { neighbors.push(this.maze.board[y + 1][x]); }
-    if (x > 0) { neighbors.push(this.maze.board[y][x - 1]); }
-    return neighbors.filter((n) => !n.algoVisited);  
+    if (x > 0) { neighbors.push(this.maze.board[y][x - 1]); }  
+
+    return neighbors.filter((n) => !n.algoVisited);
+  }
+
+  // TODO: condense this logic somehow.  lookin' a little repetitive
+  validNeighborsWithBridges({ x, y }: Coordinate): Cell[] {
+    const neighbors = [];
+
+    if (y > 0) {
+      const candidate = this.maze.board[y - 1][x];
+
+      if (!candidate.algoVisited || this.validBridge({ x, y }, { x, y: y - 1 }, { x: x - 1, y: y - 1 }, { x: x + 1, y: y - 1 }, { x, y: y - 2 })) {
+        neighbors.push(candidate);
+      }
+    }
+
+    if (y < this.height - 1) {
+      const candidate = this.maze.board[y + 1][x];
+
+      if (!candidate.algoVisited || this.validBridge({ x, y }, { x, y: y + 1 }, { x: x - 1, y: y + 1 }, { x: x + 1, y: y + 1 }, { x, y: y + 2 })) {
+        neighbors.push(candidate);
+      }
+    }
+
+    if (x > 0) {
+      const candidate = this.maze.board[y][x - 1];
+
+      if (!candidate.algoVisited || this.validBridge({ x, y }, { x: x - 1, y }, { x: x - 1, y: y - 1 }, { x: x - 1, y: y + 1 }, { x: x - 2, y })) {
+        neighbors.push(candidate);
+      }
+    }
+
+    if (x < this.width - 1) {
+      const candidate = this.maze.board[y][x + 1];
+
+      if (!candidate.algoVisited || this.validBridge({ x, y }, { x: x + 1, y }, { x: x + 1, y: y - 1 }, { x: x + 1, y: y + 1 }, { x: x + 2, y })) {
+        neighbors.push(candidate);
+      }
+    }
+
+    return neighbors;
+  }
+
+  // If the adjacent cell in a given direction is visited already, it can still be used
+  // if certain conditions are met.
+  //  - The neighbor must be a valid "bridge"
+  //    - It must be in the middle of a set of at least three previously visited cells
+  //      going perpendicular to the direction we would be going over/under it
+  //  - There must be a cell to land in on the other side
+  //  - That landing cell must not be visited yet
+  //  - The source cell must not already be a valid path directly to the bridge cell
+  validBridge(source: Coordinate, bridge: Coordinate, aSide: Coordinate, bSide: Coordinate, destination: Coordinate): boolean {
+    if ([bridge, aSide, bSide, destination].some((c) => this.outOfBounds(c))) { return false; }
+    if (this.maze.board[destination.y][destination.x].algoVisited) { return false; }
+    if ([bridge, aSide, bSide].some((c) => !this.maze.board[c.y][c.x].algoVisited)) { return false; }
+
+    const sourceCell = this.maze.board[source.y][source.x];
+    const bridgeCell = this.maze.board[bridge.y][bridge.x];
+
+    // For these four if statements, we're making sure the bridge cell isn't already open to the source cell.
+    if (sourceCell.x > bridgeCell.x && (sourceCell.boundaries & 8) === 0) { return false; }
+    if (sourceCell.x < bridgeCell.x && (sourceCell.boundaries & 2) === 0) { return false; }
+    if (sourceCell.y > bridgeCell.y && (sourceCell.boundaries & 1) === 0) { return false; }
+    if (sourceCell.y < bridgeCell.y && (sourceCell.boundaries & 4) === 0) { return false; }
+
+    // For these four if statements, we're checking horizontally to make sure
+    // the pathing supports a bridge.
+    if (bridge.x < aSide.x && bridgeCell.boundaries & 2) { return false; }
+    if (bridge.x > aSide.x && bridgeCell.boundaries & 8) { return false; }
+    if (bridge.x < bSide.x && bridgeCell.boundaries & 2) { return false; }
+    if (bridge.x > bSide.x && bridgeCell.boundaries & 8) { return false; }
+
+    // For these four if statements, we're checking vertically to make sure
+    // the pathing supports a bridge.
+    if (bridge.y < aSide.y && bridgeCell.boundaries & 4) { return false; }
+    if (bridge.y > aSide.y && bridgeCell.boundaries & 1) { return false; }
+    if (bridge.y < bSide.y && bridgeCell.boundaries & 4) { return false; }
+    if (bridge.y > bSide.y && bridgeCell.boundaries & 1) { return false; }
+
+    return true;
+  }
+
+  outOfBounds({ x, y }: Coordinate): boolean {
+    return x < 0 || x >= this.width || y < 0 || y >= this.height;
+  }
+
+  otherSideOfTheBridge(current: Coordinate, next: Cell): Cell {
+    if (current.x > next.x) { return this.maze.board[next.y][next.x - 1]; }
+    if (current.x < next.x) { return this.maze.board[next.y][next.x + 1]; }
+    if (current.y > next.y) { return this.maze.board[next.y - 1][next.x]; }
+    if (current.y < next.y) { return this.maze.board[next.y + 1][next.x]; }
+
+    // Literally impossible.
+    throw new Error('Unable to find the other side of the bridge.');
   }
 
   backtrack(path: Coordinate[]): Coordinate[] {

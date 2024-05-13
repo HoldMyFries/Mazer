@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Boundaries } from '../lib/interfaces';
+import { BridgeDirection } from '../lib/interfaces';
 import type {
   Cell,
   Coordinate,
@@ -20,12 +20,21 @@ export const useMazeStore = defineStore('mazeStore', {
     }),
     getCellByCoords: (state) => (({ x, y }: Coordinate): Cell => state.cells[y][x]),
     getNeighboringCells: (state) => {
-      return ({ x, y }: Coordinate): NeighboringCells => ({
-        up:    y === 0 ? null : state.cells[y - 1][x],
-        right: x === state.mazeConfig.width - 1 ? null : state.cells[y][x + 1],
-        down:  y === state.mazeConfig.height - 1 ? null : state.cells[y + 1][x],
-        left:  x === 0 ? null : state.cells[y][x - 1],
-      });
+      return ({ x, y }: Coordinate): NeighboringCells => {
+        const neighbors = {
+          up:    y === 0 ? null : state.cells[y - 1][x],
+          right: x === state.mazeConfig.width - 1 ? null : state.cells[y][x + 1],
+          down:  y === state.mazeConfig.height - 1 ? null : state.cells[y + 1][x],
+          left:  x === 0 ? null : state.cells[y][x - 1],
+        };
+
+        if (neighbors.up    && neighbors.up.isBridge    && neighbors.up.bridgeDirection    === BridgeDirection.HORIZONTAL) { neighbors.up    = state.cells[y - 2][x]; }
+        if (neighbors.right && neighbors.right.isBridge && neighbors.right.bridgeDirection === BridgeDirection.VERTICAL)   { neighbors.right = state.cells[y][x + 2]; }
+        if (neighbors.down  && neighbors.down.isBridge  && neighbors.down.bridgeDirection  === BridgeDirection.HORIZONTAL) { neighbors.down  = state.cells[y + 2][x]; }
+        if (neighbors.left  && neighbors.left.isBridge  && neighbors.left.bridgeDirection  === BridgeDirection.VERTICAL)   { neighbors.left  = state.cells[y][x - 2]; }
+
+        return neighbors;
+      };
     },
     getTimeInMaze: (state) => ((): SolveTime => {
       const start = state.mazeStats.enteredAt;
@@ -43,10 +52,10 @@ export const useMazeStore = defineStore('mazeStore', {
     }),
   },
   actions: {
-    setNewMaze({ height, width, maze }: NewMaze) {
+    setNewMaze({ height, width, woven, maze }: NewMaze) {
       this.cells           = maze.board;
       this.currentPosition = { x: 0, y: 0 };
-      this.mazeConfig      = { height, width };
+      this.mazeConfig      = { height, width, woven };
 
       this.mazeStats = {
         moves:          0,
@@ -57,6 +66,9 @@ export const useMazeStore = defineStore('mazeStore', {
       };
 
       this.setCellVisited(this.currentPosition);
+    },
+    setCellHeightInPixels(px: number) {
+      this.mazeConfig.cellHeight = px;
     },
     setCellVisited({ x, y }: Coordinate) {
       if (this.getCellByCoords({ x, y }).playerVisited) {
@@ -74,42 +86,5 @@ export const useMazeStore = defineStore('mazeStore', {
     incrementBonks() { this.mazeStats.bonks++; },
     setEnteredAt() { this.mazeStats.enteredAt = (new Date()).getTime(); },
     setSolvedAt() { this.mazeStats.solvedAt = (new Date()).getTime(); },
-    // I wanted to tightly couple mutation with validation to eliminate a vector for cheating.
-    moveUp() {
-      const cell = this.getCurrentCell();
-
-      if (this.currentPosition.y - 1 < 0 || cell.boundaries & Boundaries.UP ) { return this.incrementBonks(); }
-
-      this.incrementMoves();
-      this.currentPosition.y--;
-      this.setCellVisited(this.currentPosition);
-    },
-    moveRight() {
-      const cell = this.getCurrentCell();
-
-      if (this.currentPosition.x + 1 >= this.mazeConfig.width || cell.boundaries & Boundaries.RIGHT ) { return this.incrementBonks(); }
-
-      this.incrementMoves();
-      this.currentPosition.x++;
-      this.setCellVisited(this.currentPosition);
-    },
-    moveDown() {
-      const cell = this.getCurrentCell();
-
-      if (this.currentPosition.y + 1 >= this.mazeConfig.height || cell.boundaries & Boundaries.DOWN ) { return this.incrementBonks(); }
-
-      this.incrementMoves();
-      this.currentPosition.y++;
-      this.setCellVisited(this.currentPosition);
-    },
-    moveLeft() {
-      const cell = this.getCurrentCell();
-
-      if (this.currentPosition.x - 1 < 0 || cell.boundaries & Boundaries.LEFT ) { return this.incrementBonks(); }
-
-      this.incrementMoves();
-      this.currentPosition.x--;
-      this.setCellVisited(this.currentPosition);
-    }
   }
 });

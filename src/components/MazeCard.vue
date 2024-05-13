@@ -13,6 +13,7 @@
   .maze-card {
     width: 250px;
     padding: 10px;
+    cursor: pointer;
   }
 
   .maze-card:hover { border: 1px solid black; padding: 9px; }

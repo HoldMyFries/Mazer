@@ -2,6 +2,7 @@
   import { useMazeStore } from '../../stores/maze-store';
   import { useGameStore } from '../../stores/game-store';
   import MazeCell from './MazeCell.vue';
+  import WeaveCell from './WeaveCell.vue';
 
   import { ref, watch } from 'vue';
 
@@ -31,6 +32,8 @@
     px = Math.min(px, 30);
     px = Math.max(px, 10);
 
+    mazeStore.setCellHeightInPixels(px);
+
     mazeWidth.value = `${mazeStore.mazeConfig.width * px}px`;
     mazeHeight.value = `${mazeStore.mazeConfig.height * px}px`;
   };
@@ -41,7 +44,15 @@
 
 <template>
   <div class='maze casual'>
+    <WeaveCell
+      v-if="mazeStore.mazeConfig.woven"
+      v-for="cell in cells"
+      :key="`${cell.id}-woven`"
+      :x="cell.x"
+      :y="cell.y"
+    />
     <MazeCell
+      v-else
       v-for="cell in cells"
       :key="cell.id"
       :x="cell.x"
@@ -53,11 +64,11 @@
 <style scoped>
   .maze {
     margin: auto;
-    display:               grid;
-    width:                 v-bind(mazeWidth);
-    height:                v-bind(mazeHeight);
+    display: grid;
+    width: v-bind(mazeWidth);
+    height: v-bind(mazeHeight);
     grid-template-columns: v-bind(gridColumns);
-    grid-template-rows:    v-bind(gridRows);
-    outline:               none;
+    grid-template-rows: v-bind(gridRows);
+    outline: none;
   }
 </style>

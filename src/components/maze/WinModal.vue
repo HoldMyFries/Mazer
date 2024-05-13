@@ -3,7 +3,7 @@
   import { useMazeStore } from '../../stores/maze-store';
 
   const mazeStore = useMazeStore();
-  const height = `${mazeStore.mazeConfig.height * 30}px`;
+  const height = `${mazeStore.mazeConfig.height * mazeStore.mazeConfig.cellHeight!}px`;
   const { hours, minutes, seconds, milliseconds } = mazeStore.getTimeInMaze();
   const mazeStats = mazeStore.mazeStats;
 
@@ -52,6 +52,7 @@
     position: fixed;
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 
   .a-winner-is-you {
@@ -60,8 +61,8 @@
     border: 2px solid black;
     background-color: rgb(30, 30, 30, 0.9);
     padding: 20px;
-    align-self: center;
-    justify-self: center;
+    /* align-self: center;
+    justify-self: center; */
   }
 
   .congrats {
@@ -93,4 +94,6 @@
     justify-content: space-around;
     align-content: center;
   }
+
+  button { cursor: pointer; }
 </style>

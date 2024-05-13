@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { getMazeType, Casual, Easy, Medium, Hard, Diabolical } from './lib/maze-types'
+  import { getMazeType, allMazeTypes, Casual, WovenCasual } from './lib/maze-types'
+  import { inputReceived } from './lib/player-controls';
   import type { MazeType } from './lib/interfaces';
 
   import MazeCard from './components/MazeCard.vue';
@@ -16,7 +17,6 @@
 
   import { watch, nextTick } from 'vue';
 
-  const allTypes = [ Casual, Easy, Medium, Hard, Diabolical ];
   const gameStore = useGameStore();
   const mazeStore = useMazeStore();
 
@@ -26,8 +26,7 @@
     // It's a little jarring without a slight delay
     // This also gives us the opportunity to play some kind of
     // congratulatory animation in the future.
-    await nextTick();
-    gameStore.setState('win');
+    setTimeout(() => gameStore.setState('win'), 200);
   });
 
   const makeSelection = async (mazeTypeId: number) => {
@@ -35,13 +34,13 @@
     gameStore.setSelectedMazeType(mazeTypeId);
     const mazeType = getMazeType(mazeTypeId)!;
     gameStore.setState('build');
-    await buildMaze(mazeType);
+    buildMaze(mazeType);
   };
 
   const buildMaze = async (mazeType: MazeType) => {
     let generator: Generator;
 
-    if (mazeType === Casual) {
+    if (mazeType === Casual || mazeType === WovenCasual) {
       generator = new CasualMaze(mazeType);
     } else {
       generator = new ComplexMaze(mazeType);
@@ -55,21 +54,8 @@
     document.getElementsByTagName('main')[0].focus();
   }
 
-  const onKeyPressed = (e: any) => {
-    if (gameStore.state !== 'play') { return; }
-
-    const keyCodes = [ 87, 65, 83, 68, 38, 37, 40, 39 ];
-    const supportedKeypress = Object.values(keyCodes).find((c) => c === e.keyCode);
-    if (!supportedKeypress) { return; }
-
-    if (e.keyCode === 87 || e.keyCode === 38) { return mazeStore.moveUp(); }
-    if (e.keyCode === 65 || e.keyCode === 37) { return mazeStore.moveLeft(); }
-    if (e.keyCode === 83 || e.keyCode === 40) { return mazeStore.moveDown(); }
-    if (e.keyCode === 68 || e.keyCode === 39) { return mazeStore.moveRight(); }
-  };
-
   const showMaze = () => {
-    return ['play', 'win'].indexOf(gameStore.state) > -1;
+    return ['play', 'win'].some((s) => s === gameStore.state);
   };
 
   const playAgain = async () => {
@@ -88,14 +74,31 @@
     to click on the maze specifically.  They should be able to "focus" just
     about anywhere and be able to play the game.
   -->
-  <main @keydown="onKeyPressed" tabindex="0">
-    <MazeCard
-      v-if="gameStore.state === 'main-menu'"
-      v-for="mazeType in allTypes"
-      :key="mazeType.id"
-      :mazeType="mazeType"
-      @click="makeSelection(mazeType.id)"
-    />
+  <main @keydown="inputReceived" tabindex="0">
+    <div v-if="gameStore.state === 'main-menu'">
+      <div class="type">
+        <h2>Standard Mazes</h2>
+        <div class="type-row">
+          <MazeCard
+            v-for="mazeType in allMazeTypes.normal"
+            :key="mazeType.id"
+            :mazeType="mazeType"
+            @click="makeSelection(mazeType.id)"
+          />
+        </div>
+      </div>
+      <div class="type">
+        <h2>Woven Mazes</h2>
+        <div class="type-row">
+          <MazeCard
+            v-for="mazeType in allMazeTypes.woven"
+            :key="mazeType.id"
+            :mazeType="mazeType"
+            @click="makeSelection(mazeType.id)"
+          />
+        </div>
+      </div>
+    </div>
     <Loading v-if="gameStore.state === 'build'" />
     <Maze v-if="showMaze()" />
     <WinModal v-if="gameStore.state === 'win'" @play-again="playAgain" />
@@ -107,5 +110,18 @@
     display: flex;
     flex-wrap: wrap;
     outline: none;
+    flex-direction: column;
+  }
+
+  .type {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    margin-top: 20px;
+  }
+
+  .type-row {
+    display: flex;
+    flex-direction: row;
   }
 </style>
