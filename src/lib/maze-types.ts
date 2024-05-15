@@ -1,4 +1,5 @@
-import type { MazeType } from './interfaces';
+import type { MazeType } from '@/lib/interfaces';
+import { ConstructionType, Difficulty } from '@/lib/enums';
 
 export const Casual: MazeType = {
   id: 1,
@@ -8,7 +9,8 @@ export const Casual: MazeType = {
   maxHeight: 30,
   minWidth:  15,
   maxWidth:  30,
-  woven: false,
+  type: ConstructionType.NORMAL,
+  difficulty: Difficulty.CASUAL,
 };
 
 export const Easy: MazeType = {
@@ -19,7 +21,8 @@ export const Easy: MazeType = {
   maxHeight: 20,
   minWidth:  10,
   maxWidth:  20,
-  woven: false,
+  type: ConstructionType.NORMAL,
+  difficulty: Difficulty.EASY,
 }
 
 export const Medium: MazeType = {
@@ -30,7 +33,8 @@ export const Medium: MazeType = {
   maxHeight: 35,
   minWidth:  25,
   maxWidth:  35,
-  woven: false,
+  type: ConstructionType.NORMAL,
+  difficulty: Difficulty.MEDIUM,
 }
 
 export const Hard: MazeType = {
@@ -41,7 +45,8 @@ export const Hard: MazeType = {
   maxHeight: 60,
   minWidth:  40,
   maxWidth:  60,
-  woven: false,
+  type: ConstructionType.NORMAL,
+  difficulty: Difficulty.HARD,
 }
 
 export const Diabolical: MazeType = {
@@ -52,7 +57,8 @@ export const Diabolical: MazeType = {
   maxHeight: 100,
   minWidth:  80,
   maxWidth:  100,
-  woven: false,
+  type: ConstructionType.NORMAL,
+  difficulty: Difficulty.DIABOLICAL,
 }
 
 export const WovenCasual: MazeType = {
@@ -63,7 +69,8 @@ export const WovenCasual: MazeType = {
   maxHeight: 20,
   minWidth:  10,
   maxWidth:  20,
-  woven: true,
+  type: ConstructionType.WOVEN,
+  difficulty: Difficulty.CASUAL,
 };
 
 export const WovenEasy: MazeType = {
@@ -74,7 +81,8 @@ export const WovenEasy: MazeType = {
   maxHeight: 14,
   minWidth:  7,
   maxWidth:  14,
-  woven: true,
+  type: ConstructionType.WOVEN,
+  difficulty: Difficulty.EASY,
 }
 
 export const WovenMedium: MazeType = {
@@ -85,7 +93,8 @@ export const WovenMedium: MazeType = {
   maxHeight: 30,
   minWidth:  15,
   maxWidth:  30,
-  woven: true,
+  type: ConstructionType.WOVEN,
+  difficulty: Difficulty.MEDIUM,
 }
 
 export const WovenHard: MazeType = {
@@ -96,7 +105,8 @@ export const WovenHard: MazeType = {
   maxHeight: 50,
   minWidth:  35,
   maxWidth:  50,
-  woven: true,
+  type: ConstructionType.WOVEN,
+  difficulty: Difficulty.HARD,
 }
 
 export const allMazeTypes = {
@@ -115,6 +125,11 @@ export const allMazeTypes = {
   ]
 };
 
-export const getMazeType = (id: number): MazeType | undefined => {
+export const getMazeTypeById = (id: number): MazeType | undefined => {
   return allMazeTypes.normal.find((t) => t.id === id) || allMazeTypes.woven.find((t) => t.id === id);
+};
+
+export const getMazeTypeByTypeAndDifficulty = (type: ConstructionType, difficulty: Difficulty): MazeType | undefined => {
+  return allMazeTypes.normal.find((t) => t.type === type && t.difficulty === difficulty) ||
+         allMazeTypes.woven.find((t)  => t.type === type && t.difficulty === difficulty);
 };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useMazeStore } from '../../stores/maze-store';
+  import { useMazeStore } from '@/stores/maze-store';
   import { computed } from 'vue';
 
   const { x, y } = defineProps(['x', 'y']);

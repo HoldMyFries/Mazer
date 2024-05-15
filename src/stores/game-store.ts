@@ -1,22 +1,20 @@
 import { defineStore } from 'pinia';
-
-const acceptedStates = [ 'main-menu', 'build', 'play', 'win' ];
+import type { GameStore } from '@/lib/interfaces';
+import { GameState } from '@/lib/enums';
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
-    state: 'main-menu',
+    state: GameState.BUILD,
     mazeTypeId: 0,
-  }),
+    error: null,
+  } as GameStore ),
+  getters: {
+    getState: (state) => (() => state.state),
+  },
   actions: {
-    setSelectedMazeType(mazeTypeId: number) {
-      this.mazeTypeId = mazeTypeId;
-    },
-    setState(state: string) {
-      if (!acceptedStates.find((s) => s === state)) {
-        throw new Error(`Unrecognized state: '${state}'`);
-      }
-
-      this.state = state;
-    }
+    setError(error: string) { this.error = error; },
+    clearError() { this.error = null; },
+    setSelectedMazeType(mazeTypeId: number) { this.mazeTypeId = mazeTypeId; },
+    setState(state: GameState) { this.state = state; },
   },
 });

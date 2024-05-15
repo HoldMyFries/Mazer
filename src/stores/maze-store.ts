@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { BridgeDirection } from '../lib/interfaces';
+import { BridgeDirection } from '@/lib/enums';
 import type {
   Cell,
   Coordinate,
@@ -7,7 +7,7 @@ import type {
   NeighboringCells,
   NewMaze,
   SolveTime,
-} from '../lib/interfaces';
+} from '@/lib/interfaces';
 
 export const useMazeStore = defineStore('mazeStore', {
   state: () => ({

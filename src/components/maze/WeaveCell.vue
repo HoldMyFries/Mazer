@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { useMazeStore } from '../../stores/maze-store';
+  import { useMazeStore } from '@/stores/maze-store';
   import { computed } from 'vue';
-  import { BridgeDirection } from '../../lib/interfaces';
+  import { BridgeDirection } from '@/lib/enums';
 
   const { x, y } = defineProps(['x', 'y']);
 

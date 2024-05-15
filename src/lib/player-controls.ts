@@ -1,8 +1,8 @@
-import type { Cell, Coordinate } from './interfaces';
-import { BridgeDirection, Boundaries } from './interfaces';
+import type { Cell, Coordinate } from '@/lib/interfaces';
+import { BridgeDirection, Boundaries, GameState } from '@/lib/enums';
 
-import { useGameStore } from '../stores/game-store';
-import { useMazeStore } from '../stores/maze-store';
+import { useGameStore } from '@/stores/game-store';
+import { useMazeStore } from '@/stores/maze-store';
 
 const relevantBoundary = (source: Cell, destination: Cell): number => {
   if (source.y > destination.y) { return Boundaries.UP; }
@@ -43,7 +43,7 @@ export const inputReceived = (event: any) => {
   const gameStore = useGameStore();
   const mazeStore = useMazeStore();
   
-  if (gameStore.state !== 'play') { return; }
+  if (gameStore.state !== GameState.PLAY) { return; }
 
   const acceptedKeyCodes = [ 87, 65, 83, 68, 38, 37, 40, 39 ];
   const supportedKeypress = acceptedKeyCodes.find((c) => c === event.keyCode);

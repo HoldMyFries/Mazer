@@ -1,5 +1,5 @@
-import type { Coordinate } from '../interfaces.js';
-import { Generator } from './generator';
+import type { Coordinate } from '@/lib/interfaces';
+import { Generator } from '@/lib/generators/generator';
 
 export class CasualMaze extends Generator {
   backtrack(path: Coordinate[]): Coordinate[] {

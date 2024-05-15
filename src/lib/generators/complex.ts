@@ -1,5 +1,5 @@
-import type { Coordinate } from '../interfaces.js';
-import { Generator } from './generator.js';
+import type { Coordinate } from '@/lib/interfaces';
+import { Generator } from '@/lib/generators/generator';
 
 export class ComplexMaze extends Generator {
   backtrack(_: Coordinate[]): Coordinate[] {

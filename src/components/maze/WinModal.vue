@@ -1,13 +1,13 @@
 <script setup lang="ts">
-  import { useGameStore } from '../../stores/game-store';
-  import { useMazeStore } from '../../stores/maze-store';
+  import { useMazeStore } from '@/stores/maze-store';
+  import { useRouter } from 'vue-router';
 
   const mazeStore = useMazeStore();
   const height = `${mazeStore.mazeConfig.height * mazeStore.mazeConfig.cellHeight!}px`;
   const { hours, minutes, seconds, milliseconds } = mazeStore.getTimeInMaze();
   const mazeStats = mazeStore.mazeStats;
 
-  const visitedPercent = Math.round(mazeStats.visitedCount / (mazeStore.mazeConfig.height * mazeStore.mazeConfig.width) * 100)
+  const visitedPercent = Math.round(mazeStats.visitedCount / (mazeStore.mazeConfig.height * mazeStore.mazeConfig.width) * 100);
 
   let solveTime = '';
   solveTime    += `${hours.toString().padStart(2, '0')}:`;
@@ -15,9 +15,10 @@
   solveTime    += `${seconds.toString().padStart(2, '0')}.`;
   solveTime    += milliseconds.toString().padStart(3, '0');
 
+  const router = useRouter();
   const mainMenu = () => {
-    useGameStore().setState('main-menu');
-  }
+    router.push('/');
+  };
 </script>
 
 <template>
@@ -61,8 +62,6 @@
     border: 2px solid black;
     background-color: rgb(30, 30, 30, 0.9);
     padding: 20px;
-    /* align-self: center;
-    justify-self: center; */
   }
 
   .congrats {

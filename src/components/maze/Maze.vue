@@ -1,8 +1,11 @@
 <script setup lang="ts">
-  import { useMazeStore } from '../../stores/maze-store';
-  import { useGameStore } from '../../stores/game-store';
-  import MazeCell from './MazeCell.vue';
-  import WeaveCell from './WeaveCell.vue';
+  import { useMazeStore } from '@/stores/maze-store';
+  import { useGameStore } from '@/stores/game-store';
+
+  import { GameState } from '@/lib/enums';
+
+  import MazeCell from '@/components/maze/MazeCell.vue';
+  import WeaveCell from '@/components/maze/WeaveCell.vue';
 
   import { ref, watch } from 'vue';
 
@@ -17,7 +20,7 @@
 
   watch(mazeStore.getCurrentCell, async (updatedValue, _) => {
     if (!updatedValue.isGoal) { return; }
-    setTimeout(() => gameStore.setState('win'), 200);
+    setTimeout(() => gameStore.setState(GameState.WIN), 200);
   });
 
   const setMazeDimensions = () => {

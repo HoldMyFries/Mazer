@@ -1,5 +1,5 @@
-import type { Cell, Coordinate, Maze, MazeType } from '../interfaces';
-import { BridgeDirection } from '../interfaces';
+import type { Cell, Coordinate, Maze, MazeType } from '@/lib/interfaces';
+import { BridgeDirection, ConstructionType } from '@/lib/enums';
 
 // Inherited by difficulty-specific generators
 // Not intended to be used directly
@@ -13,7 +13,7 @@ export abstract class Generator {
   constructor(mazeType: MazeType) {
     this.width        = Math.floor(Math.random() * (mazeType.maxWidth - mazeType.minWidth )) + mazeType.minWidth;
     this.height       = Math.floor(Math.random() * (mazeType.maxHeight - mazeType.minHeight )) + mazeType.minHeight;
-    this.woven        = mazeType.woven;
+    this.woven        = mazeType.type === ConstructionType.WOVEN;
     this.maze         = this.buildInitialMaze();
     this.visitedCells = [];
   }

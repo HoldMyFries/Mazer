@@ -1,3 +1,5 @@
+import { BridgeDirection, ConstructionType, Difficulty, GameState, } from '@/lib/enums';
+
 export interface MazeType {
   id:          number,
   name:        string,
@@ -6,7 +8,8 @@ export interface MazeType {
   maxHeight:   number,
   minWidth:    number,
   maxWidth:    number,
-  woven:       boolean,
+  type:        ConstructionType,
+  difficulty:  Difficulty,
 }
 
 export interface Maze {
@@ -18,11 +21,6 @@ export interface Coordinate {
   y: number, // column
 }
 
-export enum BridgeDirection {
-  HORIZONTAL = 'h',
-  VERTICAL   = 'v',
-}
-
 export interface Cell extends Coordinate {
   id:               number,  // Needed for Vue v-for
   boundaries:       number,  // bitfield
@@ -32,13 +30,6 @@ export interface Cell extends Coordinate {
   isStart:          boolean,
   isBridge?:        boolean,
   bridgeDirection?: BridgeDirection,
-}
-
-export enum Boundaries {
-  UP    = 1,
-  RIGHT = 2,
-  DOWN  = 4,
-  LEFT  = 8,
 }
 
 export interface MazeConfiguration {
@@ -86,4 +77,10 @@ export interface NeighboringCells {
   right: Cell | null,
   down:  Cell | null,
   left:  Cell | null,
+}
+
+export interface GameStore {
+  state: GameState,
+  mazeTypeId: number,
+  error: string | null,
 }
