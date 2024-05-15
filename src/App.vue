@@ -7,6 +7,10 @@
   import { useGameStore } from '@/stores/game-store';
 
   const gameStore = useGameStore();
+
+  // Don't want the user to have to click the maze to play.
+  // Don't want to do funky focus() and blur() gymnastics to make it work.
+  document.addEventListener('keydown', inputReceived);
 </script>
 
 <template>
@@ -14,7 +18,7 @@
   <header>
     <h1>Mazer</h1>
   </header>
-  <main @keydown="inputReceived" tabindex="0">
+  <main>
     <RouterView />
   </main>
 </template>

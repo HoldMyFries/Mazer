@@ -20,10 +20,6 @@
   const mazeStore = useMazeStore();
   const router    = useRouter();
 
-  watch(gameStore.getState, (updatedValue, _) => {
-    if (updatedValue === GameState.PLAY) { document.getElementsByTagName('main')[0].focus(); }
-  });
-
   const { type, difficulty } = useRoute().params;
   const mazeType = getMazeTypeByTypeAndDifficulty(type as ConstructionType, difficulty as Difficulty);
 
