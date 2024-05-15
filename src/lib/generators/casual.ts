@@ -1,4 +1,4 @@
-import type { Cell, Coordinate } from '../interfaces.js';
+import type { Coordinate } from '../interfaces.js';
 import { Generator } from './generator';
 
 export class CasualMaze extends Generator {

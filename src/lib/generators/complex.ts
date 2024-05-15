@@ -1,4 +1,4 @@
-import type { Cell, Coordinate, MazeConfiguration } from '../interfaces.js';
+import type { Coordinate } from '../interfaces.js';
 import { Generator } from './generator.js';
 
 export class ComplexMaze extends Generator {

@@ -3,7 +3,7 @@ import { BridgeDirection } from '../interfaces';
 
 // Inherited by difficulty-specific generators
 // Not intended to be used directly
-export class Generator {
+export abstract class Generator {
   maze: Maze;
   width: number;
   height: number;
@@ -16,33 +16,6 @@ export class Generator {
     this.woven        = mazeType.woven;
     this.maze         = this.buildInitialMaze();
     this.visitedCells = [];
-  }
-
-  buildInitialMaze(): Maze {
-    const board = [];
-  
-    for (let h = 0; h < this.height; h++) {
-      const row = [];
-  
-      for (let w = 0; w < this.width; w++) {
-        row.push({
-          id: h + w,
-          x: w,
-          y: h,
-          boundaries: 15, // All boundaries are present until torn down
-          algoVisited: false,
-          playerVisited: false,
-          isGoal: false,
-        } as Cell);
-      }
-  
-      board.push(row);
-    }
-  
-    board[0][0].isStart = true;
-    board[this.height - 1][this.width - 1].isGoal = true;
-
-    return { board } as Maze;
   }
 
   generate() {
@@ -79,7 +52,30 @@ export class Generator {
     }
   }
 
-  adjustBoundaries(currentPosition: Coordinate, nextStep: Cell) {
+  private buildInitialMaze(): Maze {
+    const board = [];
+  
+    for (let h = 0; h < this.height; h++) {
+      const row = [];
+  
+      for (let w = 0; w < this.width; w++) {
+        row.push(this.defaultCellParams(h + w, w, h));
+      }
+  
+      board.push(row);
+    }
+  
+    board[0][0].isStart = true;
+    board[this.height - 1][this.width - 1].isGoal = true;
+
+    return { board } as Maze;
+  }
+
+  private defaultCellParams(id: number, x: number, y: number): Cell {
+    return { id, x, y, boundaries: 15, algoVisited: false, playerVisited: false, isStart: false, isGoal: false };
+  }
+
+  private adjustBoundaries(currentPosition: Coordinate, nextStep: Cell) {
     if (currentPosition.x < nextStep.x) {
       this.maze.board[nextStep.y][nextStep.x].boundaries -= 8;
       this.maze.board[currentPosition.y][currentPosition.x].boundaries -= 2;
@@ -95,7 +91,7 @@ export class Generator {
     } 
   }
 
-  validNeighbors({ x, y }: Coordinate): Cell[] {
+  protected validNeighbors({ x, y }: Coordinate): Cell[] {
     if (this.woven) { return this.validNeighborsWithBridges({ x, y }); }
 
     const neighbors = [];
@@ -109,7 +105,7 @@ export class Generator {
   }
 
   // TODO: condense this logic somehow.  lookin' a little repetitive
-  validNeighborsWithBridges({ x, y }: Coordinate): Cell[] {
+  private validNeighborsWithBridges({ x, y }: Coordinate): Cell[] {
     const neighbors = [];
 
     if (y > 0) {
@@ -155,7 +151,8 @@ export class Generator {
   //  - There must be a cell to land in on the other side
   //  - That landing cell must not be visited yet
   //  - The source cell must not already be a valid path directly to the bridge cell
-  validBridge(source: Coordinate, bridge: Coordinate, aSide: Coordinate, bSide: Coordinate, destination: Coordinate): boolean {
+  // TODO: Clean up these arguments, and clean up this method.  There's a mathy way to do this
+  private validBridge(source: Coordinate, bridge: Coordinate, aSide: Coordinate, bSide: Coordinate, destination: Coordinate): boolean {
     if ([bridge, aSide, bSide, destination].some((c) => this.outOfBounds(c))) { return false; }
     if (this.maze.board[destination.y][destination.x].algoVisited) { return false; }
     if ([bridge, aSide, bSide].some((c) => !this.maze.board[c.y][c.x].algoVisited)) { return false; }
@@ -186,11 +183,11 @@ export class Generator {
     return true;
   }
 
-  outOfBounds({ x, y }: Coordinate): boolean {
+  private outOfBounds({ x, y }: Coordinate): boolean {
     return x < 0 || x >= this.width || y < 0 || y >= this.height;
   }
 
-  otherSideOfTheBridge(current: Coordinate, next: Cell): Cell {
+  private otherSideOfTheBridge(current: Coordinate, next: Cell): Cell {
     if (current.x > next.x) { return this.maze.board[next.y][next.x - 1]; }
     if (current.x < next.x) { return this.maze.board[next.y][next.x + 1]; }
     if (current.y > next.y) { return this.maze.board[next.y - 1][next.x]; }
@@ -200,7 +197,5 @@ export class Generator {
     throw new Error('Unable to find the other side of the bridge.');
   }
 
-  backtrack(path: Coordinate[]): Coordinate[] {
-    throw new Error('Define in subclass');
-  }
+  abstract backtrack(path: Coordinate[]): Coordinate[];
 }
