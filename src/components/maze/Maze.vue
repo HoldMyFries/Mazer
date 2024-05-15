@@ -1,27 +1,18 @@
 <script setup lang="ts">
   import { useMazeStore } from '@/stores/maze-store';
-  import { useGameStore } from '@/stores/game-store';
-
-  import { GameState } from '@/lib/enums';
 
   import MazeCell from '@/components/maze/MazeCell.vue';
   import WeaveCell from '@/components/maze/WeaveCell.vue';
 
-  import { ref, watch } from 'vue';
+  import { ref } from 'vue';
 
   const mazeStore   = useMazeStore();
-  const gameStore   = useGameStore();
 
   const cells       = mazeStore.cells.flat();
   const gridRows    = `repeat(${mazeStore.mazeConfig.height}, 1fr)`;
   const gridColumns = `repeat(${mazeStore.mazeConfig.width}, 1fr)`;
   const mazeWidth   = ref('');
   const mazeHeight  = ref('');
-
-  watch(mazeStore.getCurrentCell, async (updatedValue, _) => {
-    if (!updatedValue.isGoal) { return; }
-    setTimeout(() => gameStore.setState(GameState.WIN), 200);
-  });
 
   const setMazeDimensions = () => {
     const sHeight = window.innerHeight - 100;
