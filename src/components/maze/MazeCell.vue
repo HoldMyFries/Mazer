@@ -26,7 +26,6 @@
       classes.push('visited');
     }
     
-
     return classes.join(' ');
   });
 
