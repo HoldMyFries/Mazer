@@ -26,7 +26,7 @@
     px = Math.min(px, 30);
     px = Math.max(px, 10);
 
-    mazeStore.setCellHeightInPixels(px);
+    mazeStore.setCellDimensionsInPixels(px);
 
     mazeWidth.value = `${mazeStore.mazeConfig.width * px}px`;
     mazeHeight.value = `${mazeStore.mazeConfig.height * px}px`;
@@ -37,7 +37,7 @@
 </script>
 
 <template>
-  <div class='maze casual'>
+  <div class='maze'>
     <WeaveCell
       v-if="mazeStore.mazeConfig.woven"
       v-for="cell in cells"

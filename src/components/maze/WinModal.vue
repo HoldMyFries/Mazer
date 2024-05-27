@@ -3,7 +3,7 @@
   import { useRouter } from 'vue-router';
 
   const mazeStore = useMazeStore();
-  const height = `${mazeStore.mazeConfig.height * mazeStore.mazeConfig.cellHeight!}px`;
+  const height = `${mazeStore.mazeConfig.height * mazeStore.mazeConfig.cellDimensions!}px`;
   const { hours, minutes, seconds, milliseconds } = mazeStore.getTimeInMaze();
   const mazeStats = mazeStore.mazeStats;
 

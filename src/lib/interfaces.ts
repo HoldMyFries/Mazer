@@ -33,10 +33,10 @@ export interface Cell extends Coordinate {
 }
 
 export interface MazeConfiguration {
-  width:       number,
-  height:      number,
-  cellHeight?: number,
-  woven:       boolean,
+  width:           number,
+  height:          number,
+  cellDimensions?: number,
+  woven:           boolean,
 }
 
 export interface NewMaze {

@@ -11,11 +11,18 @@ import { variedMaze, maximumEdgeCells, smallMaze } from '@/../tests/fixtures';
 // It might be more expedient to test this component through its parent component.
 // Guess I can check that when I write the specs for the Maze component.
 describe('MazeCell', () => {
-  describe('inner cells', () => {
-    beforeEach(() => {
-      const mazeStore = useMazeStore();
-      mazeStore.setNewMaze({ height: 6, width: 6, woven: false, maze: variedMaze });
+  const mazeStore = useMazeStore();
+  function setMaze(maze, woven = false) {
+    mazeStore.setNewMaze({
+      height: maze.board.length,
+      width: maze.board[0].length,
+      woven,
+      maze,
     });
+  }
+
+  describe('inner cells', () => {
+    beforeEach(() => setMaze(variedMaze));
   
     it('inner cells have correct borders', () => {
       // boundaries: 0
@@ -133,10 +140,7 @@ describe('MazeCell', () => {
   });
 
   describe('edge cells', () => {
-    beforeEach(() => {
-      const mazeStore = useMazeStore();
-      mazeStore.setNewMaze({ height: 3, width: 6, woven: false, maze: maximumEdgeCells });
-    });
+    beforeEach(() => setMaze(maximumEdgeCells));
 
     it('only flags 0,0 cell as current', () => {
       for(let x = 0; x < 6; x++) {
@@ -249,10 +253,7 @@ describe('MazeCell', () => {
   });
 
   describe('visited cells', () => {
-    beforeEach(() => {
-      const mazeStore = useMazeStore();
-      mazeStore.setNewMaze({ height: 3, width: 3, woven: false, maze: smallMaze });
-    });
+    beforeEach(() => setMaze(smallMaze));
 
     it('doesn\'t flag the current position as "visited"', () => {
       const wrapper = mount(MazeCell, { props: { x: 0, y: 0 }});

@@ -25,7 +25,7 @@
     } else if (cell.playerVisited) {
       classes.push('visited');
     }
-    
+
     return classes.join(' ');
   });
 

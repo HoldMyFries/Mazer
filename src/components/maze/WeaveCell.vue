@@ -7,6 +7,9 @@
 
   const mazeStore  = useMazeStore();
   const cell       = mazeStore.getCellByCoords({ x, y });
+  if (!cell) {
+    console.log(x, y);
+  }
   const neighbors  = mazeStore.getNeighboringCells({ x, y });
 
   const topLeftSquareClasses = computed(() => {
@@ -153,7 +156,7 @@
 </script>
 
 <template>
-  <div class="maze-cell">
+  <div class="weave-cell">
     <div :class="topLeftSquareClasses"></div>
     <div :class="topBarClasses"></div>
     <div :class="topRightSquareClasses"></div>
@@ -167,39 +170,39 @@
 </template>
 
 <style scoped>
-  .maze-cell {
+  .weave-cell {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: 1fr 3fr 1fr;
   }
 
-  .maze-cell .square.left  { border-left: 1px solid black; }
-  .maze-cell .square.right { border-right: 1px solid black; }
-  .maze-cell .square.up    { border-top: 1px solid black; }
-  .maze-cell .square.down  { border-bottom: 1px solid black; }
+  .weave-cell .square.left  { border-left: 1px solid black; }
+  .weave-cell .square.right { border-right: 1px solid black; }
+  .weave-cell .square.up    { border-top: 1px solid black; }
+  .weave-cell .square.down  { border-bottom: 1px solid black; }
 
-  .maze-cell .bar.left.closed   { border-right: 1px solid black; }
-  .maze-cell .bar.right.closed  { border-left: 1px solid black; }
-  .maze-cell .bar.top.closed    { border-bottom: 1px solid black; }
-  .maze-cell .bar.bottom.closed { border-top: 1px solid black; }
+  .weave-cell .bar.left.closed   { border-right: 1px solid black; }
+  .weave-cell .bar.right.closed  { border-left: 1px solid black; }
+  .weave-cell .bar.top.closed    { border-bottom: 1px solid black; }
+  .weave-cell .bar.bottom.closed { border-top: 1px solid black; }
 
-  .maze-cell .bar.left:not(.closed)   { border-top: 1px solid black; border-bottom: 1px solid black; }
-  .maze-cell .bar.right:not(.closed)  { border-top: 1px solid black; border-bottom: 1px solid black; }
-  .maze-cell .bar.top:not(.closed)    { border-left: 1px solid black; border-right: 1px solid black; }
-  .maze-cell .bar.bottom:not(.closed) { border-left: 1px solid black; border-right: 1px solid black; }
+  .weave-cell .bar.left:not(.closed)   { border-top: 1px solid black; border-bottom: 1px solid black; }
+  .weave-cell .bar.right:not(.closed)  { border-top: 1px solid black; border-bottom: 1px solid black; }
+  .weave-cell .bar.top:not(.closed)    { border-left: 1px solid black; border-right: 1px solid black; }
+  .weave-cell .bar.bottom:not(.closed) { border-left: 1px solid black; border-right: 1px solid black; }
 
-  .maze-cell .bar.left.bridge { border-top: 1px solid black; border-bottom: 1px solid black; }
-  .maze-cell .bar.right.bridge { border-top: 1px solid black; border-bottom: 1px solid black; }
-  .maze-cell .bar.top.bridge { border-left: 1px solid black; border-right: 1px solid black; }
-  .maze-cell .bar.bottom.bridge { border-left: 1px solid black; border-right: 1px solid black; }
+  .weave-cell .bar.left.bridge { border-top: 1px solid black; border-bottom: 1px solid black; }
+  .weave-cell .bar.right.bridge { border-top: 1px solid black; border-bottom: 1px solid black; }
+  .weave-cell .bar.top.bridge { border-left: 1px solid black; border-right: 1px solid black; }
+  .weave-cell .bar.bottom.bridge { border-left: 1px solid black; border-right: 1px solid black; }
 
-  .maze-cell .bar.visited { background-color: rgb(127, 127, 127, 0.5); }
-  .maze-cell .square.visited { background-color: rgb(127, 127, 127, 0.5); }
+  .weave-cell .bar.visited { background-color: rgb(127, 127, 127, 0.5); }
+  .weave-cell .square.visited { background-color: rgb(127, 127, 127, 0.5); }
 
-  .maze-cell .square.current { background-color: #54AAD3; }
+  .weave-cell .square.current { background-color: #54AAD3; }
 
-  .maze-cell .corner.left  { border-left: 1px solid black; }
-  .maze-cell .corner.right { border-right: 1px solid black; }
-  .maze-cell .corner.up    { border-top: 1px solid black; }
-  .maze-cell .corner.down  { border-bottom: 1px solid black; }
+  .weave-cell .corner.left  { border-left: 1px solid black; }
+  .weave-cell .corner.right { border-right: 1px solid black; }
+  .weave-cell .corner.up    { border-top: 1px solid black; }
+  .weave-cell .corner.down  { border-bottom: 1px solid black; }
 </style>

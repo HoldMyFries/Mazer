@@ -67,8 +67,8 @@ export const useMazeStore = defineStore('mazeStore', {
 
       this.setCellVisited(this.currentPosition);
     },
-    setCellHeightInPixels(px: number) {
-      this.mazeConfig.cellHeight = px;
+    setCellDimensionsInPixels(px: number) {
+      this.mazeConfig.cellDimensions = px;
     },
     setCellVisited({ x, y }: Coordinate) {
       if (this.getCellByCoords({ x, y }).playerVisited) {
