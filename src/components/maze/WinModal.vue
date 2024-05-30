@@ -28,16 +28,16 @@
       <div class="stats">
         <h3>Stats for your maze:</h3>
         <ul>
-          <li><div class="label">Solve Time:</div> {{ solveTime }}</li>
-          <li><div class="label">Cells Visited:</div> {{ mazeStats.visitedCount }} ({{ visitedPercent }}%)</li>
-          <li><div class="label">Cells Backtracked:</div> {{ mazeStats.revisitedCount }}</li>
-          <li><div class="label">Moves Made:</div> {{ mazeStats.moves }}</li>
-          <li><div class="label">Walls Bonked:</div> {{ mazeStats.bonks }}</li>
+          <li><div class="label">Solve Time:</div> <span id='solve-time'>{{ solveTime }}</span></li>
+          <li><div class="label">Cells Visited:</div> <span id='visited'>{{ mazeStats.visitedCount }} ({{ visitedPercent }}%)</span></li>
+          <li><div class="label">Cells Backtracked:</div> <span id='revisited'>{{ mazeStats.revisitedCount }}</span></li>
+          <li><div class="label">Moves Made:</div> <span id='moves'>{{ mazeStats.moves }}</span></li>
+          <li><div class="label">Walls Bonked:</div> <span id='bonks'>{{ mazeStats.bonks }}</span></li>
         </ul>
 
         <div class="buttons">
-          <button @click="$emit('playAgain')">Play Again!</button>
-          <button @click="mainMenu">Main Menu</button>
+          <button id="play-again" @click="$emit('playAgain')">Play Again!</button>
+          <button id="main-menu" @click="mainMenu">Main Menu</button>
         </div>
       </div>
     </div>

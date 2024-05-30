@@ -84,7 +84,7 @@ export const useMazeStore = defineStore('mazeStore', {
     },
     incrementMoves() { this.mazeStats.moves++; },
     incrementBonks() { this.mazeStats.bonks++; },
-    setEnteredAt() { this.mazeStats.enteredAt = (new Date()).getTime(); },
-    setSolvedAt() { this.mazeStats.solvedAt = (new Date()).getTime(); },
+    setEnteredAt(override: number | undefined) { this.mazeStats.enteredAt = override || (new Date()).getTime(); },
+    setSolvedAt(override: number | undefined) { this.mazeStats.solvedAt = override || (new Date()).getTime(); },
   }
 });

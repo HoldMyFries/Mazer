@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import Maze from '@/components/maze/Maze.vue';
 import { useMazeStore } from '@/stores/maze-store';
-import { smallMaze, maximumEdgeCells } from '@/../tests/fixtures';
+import { getSmallMaze, getMaximumEdgeCells } from '@/../tests/fixtures';
 
 // TODO: Need to figure out how to test the contents of a CSS class
 //       Since I'm doing v-bind and setting values, that needs to be tested.
@@ -21,7 +21,7 @@ describe('Maze', () => {
   }
 
   describe('calculating cell dimensions', () => {
-    beforeEach(() => setMaze(maximumEdgeCells));
+    beforeEach(() => setMaze(getMaximumEdgeCells()));
 
     it('bases cell dimensions on window dimensions and maze height/width', () => {
       window.innerWidth  = 180; // 20 * 6
@@ -61,7 +61,7 @@ describe('Maze', () => {
   });
 
   describe('standard style', () => {
-    beforeEach(() => setMaze(smallMaze));
+    beforeEach(() => setMaze(getSmallMaze()));
   
     it('renders all of the maze cells', () => {
       const wrapper = mount(Maze);
@@ -70,7 +70,7 @@ describe('Maze', () => {
   });
 
   describe('woven style', () => {
-    beforeEach(() => setMaze(smallMaze, true));
+    beforeEach(() => setMaze(getSmallMaze(), true));
 
     it('renders all of the maze cells', () => {
       const wrapper = mount(Maze);

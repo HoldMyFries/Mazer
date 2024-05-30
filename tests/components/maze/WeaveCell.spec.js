@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import WeaveCell from '@/components/maze/WeaveCell.vue';
 import { useMazeStore } from '@/stores/maze-store';
-import { smallMaze, withBridges } from '@/../tests/fixtures';
+import { getSmallMaze, getMazeWithBridges } from '@/../tests/fixtures';
 
 describe('WeaveCell', () => {
   const mazeStore = useMazeStore();
@@ -15,7 +15,7 @@ describe('WeaveCell', () => {
   }
 
   describe('building path boundaries', () => {
-    beforeEach(() => setMaze(smallMaze));
+    beforeEach(() => setMaze(getSmallMaze()));
 
     it('has grid-aligned divs for displaying path boundaries', () => {
       const wrapper = mount(WeaveCell, { props: { x: 0, y: 0 }});
@@ -91,7 +91,7 @@ describe('WeaveCell', () => {
   });
 
   describe('building bridges', () => {
-    beforeEach(() => setMaze(withBridges));
+    beforeEach(() => setMaze(getMazeWithBridges()));
 
     it('handles boundaries for horizontal bridges', () => {
       const wrapper       = mount(WeaveCell, { props: { x: 1, y: 2 }});
@@ -130,7 +130,7 @@ describe('WeaveCell', () => {
 
   describe('visited bridge cells (over vertical, under horizontal)', () => {
     beforeEach(() => {
-      const fixture = structuredClone(withBridges);
+      const fixture = getMazeWithBridges();
 
       fixture.board[0][0].playerVisited = true;
       fixture.board[0][1].playerVisited = true;
@@ -177,7 +177,7 @@ describe('WeaveCell', () => {
 
   describe('visited bridge cells (over horizontal, under vertical)', () => {
     beforeEach(() => {
-      const fixture = structuredClone(withBridges);
+      const fixture = getMazeWithBridges();
 
       fixture.board[0][0].playerVisited = true;
       fixture.board[1][0].playerVisited = true;

@@ -4,24 +4,26 @@
 </script>
 
 <template>
-  <div class="type">
-    <h2>Standard Mazes</h2>
-    <div class="type-row">
-      <MazeCard
-        v-for="mazeType in allMazeTypes.normal"
-        :key="mazeType.id"
-        :mazeType="mazeType"
-      />
+  <div id="main-menu">
+    <div class="type">
+      <h2>Standard Mazes</h2>
+      <div class="type-row">
+        <MazeCard
+          v-for="mazeType in allMazeTypes.normal"
+          :key="mazeType.id"
+          :mazeType="mazeType"
+        />
+      </div>
     </div>
-  </div>
-  <div class="type">
-    <h2>Woven Mazes</h2>
-    <div class="type-row">
-      <MazeCard
-        v-for="mazeType in allMazeTypes.woven"
-        :key="mazeType.id"
-        :mazeType="mazeType"
-      />
+    <div class="type">
+      <h2>Woven Mazes</h2>
+      <div class="type-row">
+        <MazeCard
+          v-for="mazeType in allMazeTypes.woven"
+          :key="mazeType.id"
+          :mazeType="mazeType"
+        />
+      </div>
     </div>
   </div>
 </template>

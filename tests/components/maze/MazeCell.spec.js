@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import MazeCell from '@/components/maze/MazeCell.vue';
 import { useMazeStore } from '@/stores/maze-store';
-import { variedMaze, maximumEdgeCells, smallMaze } from '@/../tests/fixtures';
+import { getVariedMaze, getMaximumEdgeCells, getSmallMaze } from '@/../tests/fixtures';
 
 // This looks verbose and repetitive; however, I didn't want to use the same logic
 // that determines what the border css classes should be to also be used in the test.
@@ -22,7 +22,7 @@ describe('MazeCell', () => {
   }
 
   describe('inner cells', () => {
-    beforeEach(() => setMaze(variedMaze));
+    beforeEach(() => setMaze(getVariedMaze()));
   
     it('inner cells have correct borders', () => {
       // boundaries: 0
@@ -140,7 +140,7 @@ describe('MazeCell', () => {
   });
 
   describe('edge cells', () => {
-    beforeEach(() => setMaze(maximumEdgeCells));
+    beforeEach(() => setMaze(getMaximumEdgeCells()));
 
     it('only flags 0,0 cell as current', () => {
       for(let x = 0; x < 6; x++) {
@@ -253,7 +253,7 @@ describe('MazeCell', () => {
   });
 
   describe('visited cells', () => {
-    beforeEach(() => setMaze(smallMaze));
+    beforeEach(() => setMaze(getSmallMaze()));
 
     it('doesn\'t flag the current position as "visited"', () => {
       const wrapper = mount(MazeCell, { props: { x: 0, y: 0 }});
@@ -265,7 +265,7 @@ describe('MazeCell', () => {
         for(let y = 0; y < 3; y++) {
           if (x !== 0 || y !== 0) {
             const wrapper = mount(MazeCell, { props: { x, y }});
-            expect(wrapper.classes('visited')).toBe(smallMaze.board[y][x].playerVisited)
+            expect(wrapper.classes('visited')).toBe(mazeStore.getCellByCoords({ x, y }).playerVisited)
           }
         }
       }
