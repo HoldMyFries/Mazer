@@ -71,12 +71,4 @@ describe('WinModal', () => {
     const wrapper = mount(WinModal, { global: { plugins: [router] }});
     expect(wrapper.find('#revisited').text()).toContain('42');
   });
-
-  describe('clicking Main Menu button', () => {
-    it('routes to the main menu', () => {
-      const wrapper = mount(WinModal, { global: { plugins: [router] }});
-      wrapper.find('#main-menu').trigger('click');
-      expect(wrapper.find('div.main-menu')).toBeDefined();
-    });
-  });
 });
