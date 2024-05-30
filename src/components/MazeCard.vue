@@ -4,7 +4,7 @@
 
 <template>
   <RouterLink :to="`/maze/${mazeType.type}/${mazeType.difficulty}`">
-    <div class="maze-card">
+    <div class="maze-card" :data-type="`${mazeType.type}`" :data-difficulty="`${mazeType.difficulty}`">
       <h3>{{ mazeType.name }}</h3>
       <p>{{ mazeType.description }}</p>
     </div>
