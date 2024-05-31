@@ -83,4 +83,5 @@ export interface GameStore {
   state: GameState,
   mazeTypeId: number,
   error: string | null,
+  keydownEvents: number,
 }

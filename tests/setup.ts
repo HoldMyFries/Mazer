@@ -1,6 +1,6 @@
 import { enableAutoUnmount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { afterEach, vi } from 'vitest';
+import { afterEach, beforeEach } from 'vitest';
 
 // TODO: Make sure doing this globally doesn't have some unintended side effects.
 //       Ultimately, I just don't want to repeat this everywhere.
@@ -10,5 +10,3 @@ setActivePinia(createPinia());
 // Ignore the red squiggle.  `globals: true` makes this available.
 // Not sure why TS is complaining about it.
 enableAutoUnmount(afterEach);
-
-//afterEach(() => { vi.clearAllMocks(); });

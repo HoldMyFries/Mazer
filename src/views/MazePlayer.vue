@@ -70,11 +70,9 @@
 </script>
 
 <template>
-  <div id="player" :data-type="`${type}`" :data-difficulty="`${difficulty}`">
-    <Loading v-if="gameStore.state === GameState.BUILD" />
-    <Maze v-if="showMaze" />
-    <WinModal v-if="gameStore.state === GameState.WIN" @playAgain="playAgain" />
-  </div>
+  <Loading v-if="gameStore.state === GameState.BUILD" />
+  <Maze v-if="showMaze" />
+  <WinModal v-if="gameStore.state === GameState.WIN" @playAgain="playAgain" />
 </template>
 
 <style scoped>

@@ -42,19 +42,21 @@ const move = (destination: Coordinate) => {
 export const inputReceived = (event: any) => {
   const gameStore = useGameStore();
   const mazeStore = useMazeStore();
-  
+
+  gameStore.incrementKeydownEvents();
+
   if (gameStore.state !== GameState.PLAY) { return; }
 
-  const acceptedKeyCodes = [ 87, 65, 83, 68, 38, 37, 40, 39 ];
-  const supportedKeypress = acceptedKeyCodes.find((c) => c === event.keyCode);
+  const acceptedKeys = [ 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D', 'ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft' ];
+  const supportedKeypress = acceptedKeys.find((k) => k === event.key);
 
   if (!supportedKeypress) { return; }
 
   const destination = { ...mazeStore.currentPosition };
-  if (event.keyCode === 87 || event.keyCode === 38) { destination.y--; }
-  if (event.keyCode === 68 || event.keyCode === 39) { destination.x++; }
-  if (event.keyCode === 65 || event.keyCode === 37) { destination.x--; }
-  if (event.keyCode === 83 || event.keyCode === 40) { destination.y++; }
+  if (event.key === 'w' || event.key === 'W' || event.key === 'ArrowUp') { destination.y--; }
+  if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') { destination.x++; }
+  if (event.key === 's' || event.key === 'S' || event.key === 'ArrowDown') { destination.y++; }
+  if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') { destination.x--; }
 
   if (destination.x < 0 || destination.x >= mazeStore.mazeConfig.width) { return mazeStore.incrementBonks(); }
   if (destination.y < 0 || destination.y >= mazeStore.mazeConfig.height) { return mazeStore.incrementBonks(); }
