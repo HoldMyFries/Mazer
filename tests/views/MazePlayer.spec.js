@@ -6,19 +6,9 @@ import { routes } from '@/router/index';
 import { useMazeStore } from '@/stores/maze-store';
 import { useGameStore } from '@/stores/game-store';
 import { GameState } from '@/lib/enums';
+import { Casual } from '@/lib/maze-types';
 
-// TODO: This test file is slower than I'd like.
-//       Still very fast by standards of other projects I've worked on.
-
-// Using createMemoryHistory() here prevents an obnoxious (but probably harmless)
-// warning from getting spat out every time the route changes in a test.
-// This is likely due to not actually using a browser, and instead just using node.
-const router = createRouter({
-  history: createMemoryHistory(),
-  routes: routes,
-});
-
-describe('MazePlayer', () => {
+describe.sequential('MazePlayer', () => {
   const mazeStore = useMazeStore();
   const gameStore = useGameStore();
 
@@ -27,7 +17,7 @@ describe('MazePlayer', () => {
   }
 
   async function clickCard() {
-    const card     = wrapper.find('.maze-card[data-type=normal][data-difficulty=casual]');
+    const card     = wrapper.find(`.maze-card[data-type=${Casual.type}][data-difficulty=${Casual.difficulty}]`);
     const cardLink = card.wrapperElement.parentNode;
 
     await cardLink.click();
@@ -35,12 +25,17 @@ describe('MazePlayer', () => {
   }
 
   beforeEach(async () => {
+    // Using createMemoryHistory() here prevents an obnoxious (but probably harmless)
+    // warning from getting spat out every time the route changes in a test.
+    // This is likely due to not actually using a browser, and instead just using node.
+    this.router = createRouter({
+      history: createMemoryHistory(),
+      routes: routes,
+    });
+
     router.push('/');
     await router.isReady();
 
-    // This is the best I can do without introducing a dependency to get something
-    // similar to rspec's `let`, although this is _actually_ `let!` since it isn't
-    // lazy-loaded.
     this.wrapper = await wrap();
 
     await clickCard();
@@ -239,7 +234,10 @@ describe('MazePlayer', () => {
       });
 
       it('doesn\'t allow moving south from the goal', () => {
-        this.cell = mazeStore.getCellByCoords({ x: mazeStore.mazeConfig.width - 1, y: mazeStore.mazeConfig.height - 1 });
+        this.cell = mazeStore.getCellByCoords({
+          x: mazeStore.mazeConfig.width - 1,
+          y: mazeStore.mazeConfig.height - 1,
+        });
         mazeStore.setCurrentPosition(cell);
 
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
@@ -319,7 +317,11 @@ describe('MazePlayer', () => {
   const wait = (time) => new Promise((resolve, _) => setTimeout(resolve, time));
 
   function solveMaze() {
-    const goal = mazeStore.getCellByCoords({ x: mazeStore.mazeConfig.width - 1, y: mazeStore.mazeConfig.height - 1 });
+    const goal = mazeStore.getCellByCoords({
+      x: mazeStore.mazeConfig.width - 1,
+      y: mazeStore.mazeConfig.height - 1,
+    });
+
     let destination;
     let key;
 
@@ -341,13 +343,39 @@ describe('MazePlayer', () => {
 
       expect(wrapper.find('.a-winner-is-you').exists()).toBe(false);
 
-      // Putting this delay any lower causes the test too fail occasionally.
-      // The actual wait before displaying the win modal is 200ms, but it's
-      // clear that the above code takes an inconsistent amount of time to
-      // execute.
-      await wait(100);
-
+      await wait(210);
       expect(wrapper.find('.a-winner-is-you').exists()).toBe(true);
     });
+  });
+
+  describe('interacting with the Win Modal', () => {
+    async function clickButton(button) {
+      expect(wrapper.find(button).exists()).toBeTruthy();
+      wrapper.find(button).trigger('click');
+      await wait(10);
+    }
+
+    describe('Main Menu button', () => {
+      it('navigates to the main menu', async () => {
+        solveMaze();
+        await wait(210);
+
+        expect(gameStore.getState()).toBe('win')
+        
+        await clickButton('#main-menu');
+        expect(wrapper.find('.maze-card').exists()).toBeTruthy();
+      });
+    });
+  
+    describe('Play Again button', () => {
+      it('generates a new maze of the same type', async () => {
+        solveMaze();
+  
+        await wait(210);
+        await clickButton('#play-again');
+  
+        expect(gameStore.mazeTypeId).toBe(Casual.id);
+      });
+    });  
   });
 });

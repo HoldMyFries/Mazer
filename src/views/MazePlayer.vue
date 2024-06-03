@@ -76,5 +76,4 @@
 </template>
 
 <style scoped>
-  #player { outline: none; }
 </style>

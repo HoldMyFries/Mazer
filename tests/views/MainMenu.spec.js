@@ -5,20 +5,17 @@ import App from '@/App.vue';
 import { routes } from '@/router/index';
 import { allMazeTypes, Casual, WovenMedium } from '@/lib/maze-types';
 
-// Using createMemoryHistory() here prevents an obnoxious (but probably harmless)
-// warning from getting spat out every time the route changes in a test.
-// This is likely due to not actually using a browser, and instead just using node.
-const router = createRouter({
-  history: createMemoryHistory(),
-  routes: routes,
-});
-
 describe('Main Menu', async () => {
   async function wrap() {
     return mount(App, { global: { plugins: [router] }});
   }
 
   beforeEach(async () => {
+    this.router = createRouter({
+      history: createMemoryHistory(),
+      routes: routes,
+    });
+    
     router.push('/');
     await router.isReady();
   });
