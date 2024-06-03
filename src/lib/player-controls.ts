@@ -45,7 +45,7 @@ export const inputReceived = (event: any) => {
 
   gameStore.incrementKeydownEvents();
 
-  if (gameStore.state !== GameState.PLAY) { return; }
+  if (gameStore.getState() !== GameState.PLAY) { return; }
 
   const acceptedKeys = [ 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D', 'ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft' ];
   const supportedKeypress = acceptedKeys.find((k) => k === event.key);
