@@ -1,20 +1,16 @@
-import { mount, flushPromises } from '@vue/test-utils';
-import { createRouter, createMemoryHistory } from 'vue-router';
+import { flushPromises } from '@vue/test-utils';
 
 import App from '@/App.vue';
-import { routes } from '@/router/index';
 import { useMazeStore } from '@/stores/maze-store';
 import { useGameStore } from '@/stores/game-store';
 import { GameState } from '@/lib/enums';
 import { Casual } from '@/lib/maze-types';
 
+import { buildRouter, wait, wrapWithRouter } from '../helpers';
+
 describe.sequential('MazePlayer', () => {
   const mazeStore = useMazeStore();
   const gameStore = useGameStore();
-
-  async function wrap() {
-    return mount(App, { global: { plugins: [router] }});
-  }
 
   async function clickCard() {
     const card     = wrapper.find(`.maze-card[data-type=${Casual.type}][data-difficulty=${Casual.difficulty}]`);
@@ -25,18 +21,8 @@ describe.sequential('MazePlayer', () => {
   }
 
   beforeEach(async () => {
-    // Using createMemoryHistory() here prevents an obnoxious (but probably harmless)
-    // warning from getting spat out every time the route changes in a test.
-    // This is likely due to not actually using a browser, and instead just using node.
-    this.router = createRouter({
-      history: createMemoryHistory(),
-      routes: routes,
-    });
-
-    router.push('/');
-    await router.isReady();
-
-    this.wrapper = await wrap();
+    this.router  = await buildRouter();
+    this.wrapper = await wrapWithRouter(App, router);
 
     await clickCard();
   });
@@ -314,8 +300,6 @@ describe.sequential('MazePlayer', () => {
     });
   });
 
-  const wait = (time) => new Promise((resolve, _) => setTimeout(resolve, time));
-
   function solveMaze() {
     const goal = mazeStore.getCellByCoords({
       x: mazeStore.mazeConfig.width - 1,
@@ -350,7 +334,6 @@ describe.sequential('MazePlayer', () => {
 
   describe('interacting with the Win Modal', () => {
     async function clickButton(button) {
-      expect(wrapper.find(button).exists()).toBeTruthy();
       wrapper.find(button).trigger('click');
       await wait(10);
     }

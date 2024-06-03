@@ -1,27 +1,16 @@
-import { mount, flushPromises } from '@vue/test-utils';
-import { createRouter, createMemoryHistory } from 'vue-router';
+import { flushPromises } from '@vue/test-utils';
 
 import App from '@/App.vue';
 import { routes } from '@/router/index';
 import { allMazeTypes, Casual, WovenMedium } from '@/lib/maze-types';
 
-describe('Main Menu', async () => {
-  async function wrap() {
-    return mount(App, { global: { plugins: [router] }});
-  }
+import { buildRouter, wrapWithRouter } from '../helpers';
 
-  beforeEach(async () => {
-    this.router = createRouter({
-      history: createMemoryHistory(),
-      routes: routes,
-    });
-    
-    router.push('/');
-    await router.isReady();
-  });
+describe('Main Menu', async () => {
+  beforeEach(async () => this.router = await buildRouter());
 
   it('renders maze cards in rows based on defined categorizations', async () => {
-    const wrapper = await wrap();
+    const wrapper = await wrapWithRouter(App, router);
     const normal  = wrapper.find('.type:nth-child(1) .type-row');
     const woven   = wrapper.find('.type:nth-child(2) .type-row');
 
@@ -38,7 +27,7 @@ describe('Main Menu', async () => {
 
   describe('navigation', () => {
     async function clickCard(mazeType) {
-      const wrapper  = await wrap();
+      const wrapper  = await wrapWithRouter(App, router);
       const card     = wrapper.find(`.maze-card[data-type=${mazeType.type}][data-difficulty=${mazeType.difficulty}]`);
       const cardLink = card.wrapperElement.parentNode;
 
